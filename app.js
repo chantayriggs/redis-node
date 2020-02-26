@@ -1,44 +1,43 @@
-const express = require('express');
-const exphbs = require('express-handlebars');
-const path = require('path');
-const bodyParser = require('body-parser');
-const methodOverride = require('method-override');
-const redis = require('redis');
+const express = require('express')
+const exphbs = require('express-handlebars')
+const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
+const redis = require('redis')
 
 // Create Redis Client
-let client = redis.createClient();
+let client = redis.createClient()
 
 client.on('connect', () => {
-  console.log('Connected to Redis...');
-});
+  console.log('Connected to Redis...')
+}) 
 
 // Set Port
-const port = 3000;
+const port = 3000
 
 // Init app
-const app = express();
+const app = express()
 
 // View Engine\
-app.engine('handlebars', exphbs({defaultLayout:'main'}));
-app.set('view engine', 'handlebars');
+app.engine('handlebars', exphbs({ defaultLayout:'main' }))
+app.set('view engine', 'handlebars')
 
 // body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended:false }))
 
 // methodOverride
-app.use(methodOverride('_method'));
+app.use(methodOverride('_method'))
 
 // Search Page
-app.get('/', (req, res, next) => {
-  res.render('searchusers');
-});
+app.get('/', res => {
+  res.render('searchusers')
+})
 
 // Search processing
-app.post('/user/search', (req, res, next) => {
+app.post('/user/search', ( req, res ) => {
   let id = req.body.id;
 
-  client.hgetall(id, (err, obj) => {
+  client.hgetall(id, obj => {
     if(!obj){
       res.render('searchusers', {
         error: 'User does not exist'
@@ -53,17 +52,17 @@ app.post('/user/search', (req, res, next) => {
 });
 
 // Add User Page
-app.get('/user/add', (req, res, next) => {
-  res.render('adduser');
-});
+app.get('/user/add', res => {
+  res.render('adduser')
+})
 
 // Process Add User Page
-app.post('/user/add', (req, res, next) => {
+app.post('/user/add', ( req, res ) => {
   let id = req.body.id;
-  let first_name = req.body.first_name;
-  let last_name = req.body.last_name;
-  let email = req.body.email;
-  let phone = req.body.phone;
+  let first_name = req.body.first_name
+  let last_name = req.body.last_name
+  let email = req.body.email
+  let phone = req.body.phone
 
   client.hmset(id, [
     'first_name', first_name,
@@ -72,19 +71,19 @@ app.post('/user/add', (req, res, next) => {
     'phone', phone
   ], (err, reply) => {
     if(err){
-      console.log(err);
+      console.log(err)
     }
-    console.log(reply);
-    res.redirect('/');
-  });
-});
+    console.log(reply)
+    res.redirect('/')
+  })
+})
 
 // Delete User
-app.delete('/user/delete/:id', (req, res, next) => {
+app.delete('/user/delete/:id', ( req, res ) => {
   client.del(req.params.id);
-  res.redirect('/');
-});
+  res.redirect('/')
+})
 
 app.listen(port, () => {
-  console.log('Server started on port ' + port);
-});
+  console.log('Server started on port ' + port)
+})
