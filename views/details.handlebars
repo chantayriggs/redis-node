@@ -1,0 +1,9 @@
+  
+<h2>{{user.first_name}} {{user.last_name}} [{{user.id}}]</h2>
+  <div>Email: {{user.email}} </div>
+  <div>Phone: {{user.phone}} </div>
+
+<a href="/">Back</a>
+<form method="POST" action="/user/delete/{{user.id}}?_method=DELETE">
+  <input type="submit" value="Delete">
+</form>

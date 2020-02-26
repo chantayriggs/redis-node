@@ -1,0 +1,7 @@
+
+<h2>Search Users</h2>
+{{#if error}} <span>{{error}}</span>{{/if}}
+<form method="POST" action="/user/search">
+    <input type="text" name="id" placeholder="Search Users By ID">
+  <input type="submit" value="Search">
+</form>
