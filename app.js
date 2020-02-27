@@ -1,4 +1,3 @@
-  
 const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
@@ -20,26 +19,26 @@ const port = 3000
 const app = express()
 
 // View Engine\
-app.engine('handlebars', exphbs({ defaultLayout:'main' }))
+app.engine('handlebars', exphbs({defaultLayout:'main'}))
 app.set('view engine', 'handlebars')
 
 // body-parser
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended:false }))
+app.use(bodyParser.urlencoded({extended:false}))
 
 // methodOverride
 app.use(methodOverride('_method'))
 
 // Search Page
-app.get('/', res => {
+app.get('/', (req, res, next) => {
   res.render('searchusers')
 })
 
 // Search processing
-app.post('/user/search', ( req, res ) => {
+app.post('/user/search', (req, res, next) => {
   let id = req.body.id
 
-  client.hgetall(id, obj => {
+  client.hgetall(id, (err, obj) => {
     if(!obj){
       res.render('searchusers', {
         error: 'User does not exist'
@@ -54,12 +53,12 @@ app.post('/user/search', ( req, res ) => {
 })
 
 // Add User Page
-app.get('/user/add', res => {
+app.get('/user/add', (req, res, next) => {
   res.render('adduser')
 })
 
 // Process Add User Page
-app.post('/user/add', ( req, res ) => {
+app.post('/user/add', (req, res, next) => {
   let id = req.body.id
   let first_name = req.body.first_name
   let last_name = req.body.last_name
@@ -73,7 +72,7 @@ app.post('/user/add', ( req, res ) => {
     'phone', phone
   ], (err, reply) => {
     if(err){
-      console.log(err) 
+      console.log(err)
     }
     console.log(reply)
     res.redirect('/')
@@ -81,7 +80,7 @@ app.post('/user/add', ( req, res ) => {
 })
 
 // Delete User
-app.delete('/user/delete/:id', ( req, res ) => {
+app.delete('/user/delete/:id', (req, res, next) => {
   client.del(req.params.id)
   res.redirect('/')
 })
