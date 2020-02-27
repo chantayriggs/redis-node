@@ -31,15 +31,15 @@ app.use(bodyParser.urlencoded({ extended:false }))
 app.use(methodOverride('_method'))
 
 // Search Page
-app.get('/', (req, res, next) => {
+app.get('/', res => {
   res.render('searchusers')
 })
 
 // Search processing
-app.post('/user/search', (req, res, next) => {
+app.post('/user/search', ( req, res ) => {
   let id = req.body.id
 
-  client.hgetall(id, (err, obj) => {
+  client.hgetall(id, obj => {
     if(!obj){
       res.render('searchusers', {
         error: 'User does not exist'
@@ -54,12 +54,12 @@ app.post('/user/search', (req, res, next) => {
 })
 
 // Add User Page
-app.get('/user/add', (req, res, next) => {
+app.get('/user/add', res => {
   res.render('adduser')
 })
 
 // Process Add User Page
-app.post('/user/add', (req, res, next) => {
+app.post('/user/add', ( req, res ) => {
   let id = req.body.id
   let first_name = req.body.first_name
   let last_name = req.body.last_name
@@ -81,11 +81,11 @@ app.post('/user/add', (req, res, next) => {
 })
 
 // Delete User
-app.delete('/user/delete/:id', (req, res, next) => {
+app.delete('/user/delete/:id', ( req, res ) => {
   client.del(req.params.id)
   res.redirect('/')
 })
 
 app.listen(port, () => {
-  console.log('Server started on port '+port)
+  console.log('Server started on port ' + port)
 })
