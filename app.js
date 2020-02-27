@@ -1,5 +1,7 @@
+  
 const express = require('express')
 const exphbs = require('express-handlebars')
+const path = require('path')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const redis = require('redis')
@@ -9,7 +11,7 @@ let client = redis.createClient()
 
 client.on('connect', () => {
   console.log('Connected to Redis...')
-}) 
+})
 
 // Set Port
 const port = 3000
@@ -29,36 +31,36 @@ app.use(bodyParser.urlencoded({ extended:false }))
 app.use(methodOverride('_method'))
 
 // Search Page
-app.get('/', res => {
+app.get('/', (req, res, next) => {
   res.render('searchusers')
 })
 
 // Search processing
-app.post('/user/search', ( req, res ) => {
-  let id = req.body.id;
+app.post('/user/search', (req, res, next) => {
+  let id = req.body.id
 
-  client.hgetall(id, obj => {
+  client.hgetall(id, (err, obj) => {
     if(!obj){
       res.render('searchusers', {
         error: 'User does not exist'
-      });
+      })
     } else {
-      obj.id = id;
+      obj.id = id
       res.render('details', {
         user: obj
-      });
+      })
     }
-  });
-});
+  })
+})
 
 // Add User Page
-app.get('/user/add', res => {
+app.get('/user/add', (req, res, next) => {
   res.render('adduser')
 })
 
 // Process Add User Page
-app.post('/user/add', ( req, res ) => {
-  let id = req.body.id;
+app.post('/user/add', (req, res, next) => {
+  let id = req.body.id
   let first_name = req.body.first_name
   let last_name = req.body.last_name
   let email = req.body.email
@@ -71,7 +73,7 @@ app.post('/user/add', ( req, res ) => {
     'phone', phone
   ], (err, reply) => {
     if(err){
-      console.log(err)
+      console.log(err) 
     }
     console.log(reply)
     res.redirect('/')
@@ -79,11 +81,11 @@ app.post('/user/add', ( req, res ) => {
 })
 
 // Delete User
-app.delete('/user/delete/:id', ( req, res ) => {
-  client.del(req.params.id);
+app.delete('/user/delete/:id', (req, res, next) => {
+  client.del(req.params.id)
   res.redirect('/')
 })
 
 app.listen(port, () => {
-  console.log('Server started on port ' + port)
+  console.log('Server started on port '+port)
 })
